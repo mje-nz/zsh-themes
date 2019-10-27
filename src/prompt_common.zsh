@@ -41,6 +41,12 @@ prompt_git_branch() {
   fi
 }
 
+prompt_git_bisecting() {
+  if git bisect log >/dev/null 2>&1; then
+    echo "%{$fg[red]%}bisecting, %{$reset_color%}"
+  fi
+}
+
 # Show different symbols as appropriate for various Git repository states
 prompt_git_state() {
   # Compose this value via multiple conditional appends.
@@ -92,7 +98,7 @@ prompt_git_state() {
 prompt_git_block() {
   local branch="$(prompt_git_branch)"
   if [ -n "$branch" ]; then
-    echo "$GIT_PROMPT_PREFIX$branch$(prompt_git_state)$GIT_PROMPT_SUFFIX"
+    echo "$GIT_PROMPT_PREFIX$(prompt_git_bisecting)$branch$(prompt_git_state)$GIT_PROMPT_SUFFIX"
   fi
 }
 
