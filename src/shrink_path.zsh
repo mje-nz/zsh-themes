@@ -16,7 +16,9 @@ shrink_path () {
     setopt null_glob
 
     typeset -a tree expn
-    typeset result part dir=${1-$PWD} full_len=$2
+    # On macOS, builtin pwd and /bin/pwd return the wrong case (sometimes), so use
+    # GNU pwd (if available).
+    typeset result part dir=${1-$(command pwd)} full_len=$2
     typeset -i i
 
     [[ -d $dir ]] || return 0

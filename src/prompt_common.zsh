@@ -211,6 +211,7 @@ prompt_working_dir_block() {
   fi
   echo "$output"
 }
+# TODO: shorten more with nested repos (e.g. natnet_ros)
 
 # Show the return value of the last command, if it wasn't zero
 prompt_return_value_block() {
