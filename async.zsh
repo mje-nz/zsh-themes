@@ -47,7 +47,7 @@ prompt_async_update() {
   echo -n "%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) "
 }
 
-# Uddate prompt with async result
+# Update prompt with async result
 prompt_async_update_complete() {
   # shellcheck disable=SC2034
   PROMPT="$3"
