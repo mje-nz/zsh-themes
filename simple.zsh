@@ -10,6 +10,9 @@
 
 
 # Load path helper
+# https://stackoverflow.com/a/28336473
+# https://unix.stackexchange.com/a/115431
+0=${(%):-%x}
 __MJE_THEME_DIR="$0:A:h"
 source "$__MJE_THEME_DIR/shrink_path"
 
@@ -116,11 +119,11 @@ prompt_git_block() {
 #                                Execution time                               #
 ###############################################################################
 
-# turns seconds into human readable time
+# Turn seconds into human readable time
 # 165392.5 => 1d21h56m32.5s
-# Based on https://github.com/sindresorhus/pretty-time-zsh
+# From https://github.com/sindresorhus/pure/blob/master/pure.zsh
 prompt_human_time_to_var() {
-  local human=" " total_seconds=$1 var=$2
+  local human total_seconds=$1 var=$2
   integer days=$(( total_seconds / 60 / 60 / 24 ))
   integer hours=$(( total_seconds / 60 / 60 % 24 ))
   integer minutes=$(( total_seconds / 60 % 60 ))
@@ -130,39 +133,43 @@ prompt_human_time_to_var() {
   (( minutes > 0 )) && human+="${minutes}m"
   human+="$(printf '%.1fs' $seconds)"
 
-  # store human readable time in variable as specified by caller
+  # Store human readable time in a variable as specified by the caller
   typeset -g "${var}"="${human}"
 }
 
-# stores (into prompt_cmd_exec_time) the exec time of the last command if set threshold was exceeded
+# Store (into prompt_cmd_exec_time) the execution time of the last command if
+# set threshold was exceeded.
 prompt_check_cmd_exec_time() {
-  # Float variable
   typeset -F elapsed
   (( elapsed = EPOCHREALTIME - ${prompt_cmd_timestamp:-$EPOCHREALTIME} ))
-  prompt_cmd_exec_time=
+  typeset -g prompt_cmd_exec_time=
   (( elapsed > PROMPT_CMD_MAX_EXEC_TIME )) && {
     prompt_human_time_to_var $elapsed "prompt_cmd_exec_time"
   }
 }
 
-prompt_exec_time_block() {
-  if [[ -n "$prompt_cmd_exec_time" ]]; then
-    echo "⟳$prompt_cmd_exec_time "
-  fi
+# Store timestamp when a command starts executing
+prompt_time_preexec() {
+  typeset -g prompt_cmd_timestamp=$EPOCHREALTIME
 }
 
-prompt_preexec() {
-  prompt_cmd_timestamp=$EPOCHREALTIME
-}
-
-prompt_precmd() {
+prompt_time_precmd() {
+  # Check execution time and store it in a variable.
   prompt_check_cmd_exec_time
+  unset prompt_cmd_timestamp
 }
 
 zmodload zsh/datetime
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd prompt_precmd
-add-zsh-hook preexec prompt_preexec
+add-zsh-hook precmd prompt_time_precmd
+add-zsh-hook preexec prompt_time_preexec
+
+prompt_exec_time_block() {
+  if [[ -n "$prompt_cmd_exec_time" ]]; then
+    # Need space or ⟳ overlaps time
+    echo "⟳ $prompt_cmd_exec_time "
+  fi
+}
 
 
 
@@ -244,3 +251,12 @@ prompt_char() {
 
 PROMPT='$(prompt_user_block)$(prompt_working_dir_block)
 %_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) '
+
+# TODO: PROMPT2 from Pure
+# TODO: set title from Pure
+# TODO: privatise variables
+# TODO: case-insensitive user check
+# TODO: is SSH_CONNECTION reliable?
+# TODO: DEFAULT_MACHINE?
+# TODO: Silence shellcheck warnings
+# TODO: faster git checks
