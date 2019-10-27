@@ -9,6 +9,10 @@
 # TODO: Asynchronous git update as in pure
 
 
+# Load path helper
+__MJE_THEME_DIR="$0:A:h"
+source "$__MJE_THEME_DIR/shrink_path"
+
 autoload -U colors && colors # Enable colors in prompt
 
 # Display user unless it is this user
