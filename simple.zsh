@@ -4,7 +4,7 @@
 # Username hiding from agnoster  (https://gist.github.com/agnoster/3712874)
 # Git status based on https://gist.github.com/joshdick/4415470
 # -- Shows number of commits to push/pull, merge status, traffic lights for untracked/modified/staged
-# Execution time from pure  (https://github.com/sindresorhus/pure)
+# Execution time and continuation prompt from pure  (https://github.com/sindresorhus/pure)
 
 # shellcheck disable=SC1090,SC2034,SC2016
 
@@ -17,12 +17,15 @@ source "$__MJE_THEME_DIR/src/shrink_path.zsh"
 source "$__MJE_THEME_DIR/src/prompt_common.zsh"
 
 
-# TODO: Tweak colours? Blue is often hard to see
 
+# Main prompt
+# TODO: Tweak colours? Blue is often hard to see
 PROMPT='$(prompt_user_block)$(prompt_working_dir_block)
 %_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) '
 
-# TODO: PROMPT2 from Pure
+# Continuation prompt
+PROMPT2='%F{242}%_… %f> '
+
 # TODO: set title from Pure
 # TODO: privatise variables
 # TODO: case-insensitive user check

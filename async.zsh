@@ -4,7 +4,7 @@
 # Username hiding from agnoster  (https://gist.github.com/agnoster/3712874)
 # Git status based on https://gist.github.com/joshdick/4415470
 # -- Shows number of commits to push/pull, merge status, traffic lights for untracked/modified/staged
-# Execution time from pure  (https://github.com/sindresorhus/pure)
+# Execution time and contiuation prompt from pure  (https://github.com/sindresorhus/pure)
 
 # shellcheck disable=SC1090,SC2034,SC2016
 
@@ -69,3 +69,6 @@ prompt_async_update_complete() {
 %_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) '
   zle && zle reset-prompt
 }
+
+# Continuation prompt
+PROMPT2='%F{242}%_… %f> '
