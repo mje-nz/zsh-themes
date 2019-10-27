@@ -182,7 +182,6 @@ prompt_working_dir_part() {
 
 # Print the working directory, with git information inserted where appropriate
 prompt_working_dir_block() {
-  # Uses shrink_path function from functions dir
   local len=${1-$#PWD}
   local git_root=$(git rev-parse --show-toplevel 2>/dev/null)
   local output=''
