@@ -26,6 +26,7 @@ PROMPT_GIT_SUFFIX="%{$fg[green]%})%{$reset_color%}"
 PROMPT_GIT_AHEAD="%{$fg[red]%}NUM↑%{$reset_color%}"
 PROMPT_GIT_BEHIND="%{$fg[cyan]%}NUM↓%{$reset_color%}"
 PROMPT_GIT_MERGING="%{$fg[magenta]%}⚡︎%{$reset_color%}"
+PROMPT_GIT_REBASING=$PROMPT_GIT_MERGING
 PROMPT_GIT_UNTRACKED="%{$fg[red]%}●%{$reset_color%}"
 PROMPT_GIT_MODIFIED="%{$fg[yellow]%}●%{$reset_color%}"
 PROMPT_GIT_STAGED="%{$fg[green]%}●%{$reset_color%}"
@@ -66,8 +67,13 @@ prompt_git_state() {
   # Merge indicator and traffic light
   local GIT_DIR output_2
   GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-  if [ -n "$GIT_DIR" ] && test -r "$GIT_DIR/MERGE_HEAD"; then
-    output_2=$output_2$PROMPT_GIT_MERGING
+  if [ -n "$GIT_DIR" ]; then
+    if test -r "$GIT_DIR/MERGE_HEAD"; then
+      output_2=$output_2$PROMPT_GIT_MERGING
+    fi
+    if test -r "$GIT_DIR/REBASE_HEAD"; then
+      output_2=$output_2$PROMPT_GIT_REBASING
+    fi
   fi
 
   if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
