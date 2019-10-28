@@ -177,7 +177,7 @@ prompt_exec_time_block() {
 prompt_user_block() {
   local user=$(whoami)
 
-  if [[ "$user" != "$PROMPT_DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
+  if [[ "$user:u" != "$PROMPT_DEFAULT_USER:u" || -n "$SSH_CONNECTION" ]]; then
     echo "%{$fg[magenta]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%}: "
   fi
 }
