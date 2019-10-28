@@ -1,9 +1,9 @@
 # Minimal, fast zsh themes
 
-TODO screenshot
+![screenshot](img/screenshot.png)
 
 
-## Overview
+## Features
 
 * Shows username and hostname, but only when you're not on your usual machine
 * Shows working directory with interleaved git state
