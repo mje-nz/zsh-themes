@@ -4,7 +4,7 @@
 # Username hiding from agnoster  (https://gist.github.com/agnoster/3712874)
 # Git status based on https://gist.github.com/joshdick/4415470
 # -- Shows number of commits to push/pull, merge status, traffic lights for untracked/modified/staged
-# Execution time and continuation prompt from pure  (https://github.com/sindresorhus/pure)
+# Execution time and continuation prompt from pure (https://github.com/sindresorhus/pure)
 
 # shellcheck disable=SC1090,SC2034,SC2016
 
