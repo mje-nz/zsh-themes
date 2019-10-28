@@ -21,7 +21,7 @@ source "$__MJE_THEME_DIR/src/prompt_common.zsh"
 # Main prompt
 # TODO: Tweak colours? Blue is often hard to see
 PROMPT='$(prompt_user_block)$(prompt_working_dir_block)
-%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) '
+%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_venv_block)$(prompt_char) '
 
 # Continuation prompt
 PROMPT2='%F{242}%_… %f> '

@@ -34,7 +34,7 @@ prompt_precmd() {
   # Render fast prompt
   # shellcheck disable=SC2016
   PROMPT='$(prompt_user_block)$(prompt_working_dir_block_fast)
-%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) '
+%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_venv_block)$(prompt_char) '
 
   # Start async job to render full prompt (no harm calling these repeatedly)
   # Note worker doesn't share environment so any variables needed must be passed in
@@ -66,7 +66,7 @@ prompt_async_update_complete() {
   # Update prompt
   # shellcheck disable=SC2016
   PROMPT='$(prompt_user_block)$working_dir_block
-%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_char) '
+%_$(prompt_return_value_block)$(prompt_jobs_block)$(prompt_exec_time_block)$(prompt_docker_block)$(prompt_venv_block)$(prompt_char) '
   zle && zle reset-prompt
 }
 

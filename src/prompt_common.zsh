@@ -236,6 +236,21 @@ prompt_docker_block() {
   fi
 }
 
+prompt_venv_block() {
+  if [[ -n ${VIRTUAL_ENV} ]]; then
+    local venv
+    # Get relative path to venv, ensuring it ends in the venv's name when $PWD is
+    # a subdir of the venv
+    venv="$(realpath --relative-to="$PWD" "$VIRTUAL_ENV:h")/$VIRTUAL_ENV:t"
+    # Remove leading ./
+    venv=${venv#./}
+    echo "($venv) "
+  fi
+}
+
+# Disable prompt mangling in virtual_env/bin/activate
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
 # Prompt character: red # for root, $ otherwise
 prompt_char() {
   echo "%(!.%{$fg[red]%}#%{$reset_color%}.$)"
