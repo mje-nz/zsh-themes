@@ -26,8 +26,6 @@ PROMPT='$(prompt_user_block)$(prompt_working_dir_block)
 # Continuation prompt
 PROMPT2='%F{242}%_… %f> '
 
-# TODO: set title from Pure
-# TODO: privatise variables
 # TODO: case-insensitive user check
 # TODO: is SSH_CONNECTION reliable?
 # TODO: DEFAULT_MACHINE?

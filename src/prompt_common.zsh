@@ -4,7 +4,7 @@
 autoload -U colors && colors # Enable colors in prompt
 
 # Display user unless it is this user
-DEFAULT_USER=${DEFAULT_USER:-Matthew}
+PROMPT_DEFAULT_USER=${PROMPT_DEFAULT_USER:-Matthew}
 
 # Display execution time if greater than this value (in seconds)
 PROMPT_CMD_MAX_EXEC_TIME=${PROMPT_CMD_MAX_EXEC_TIME:-5}
@@ -18,78 +18,79 @@ PROMPT_CMD_MAX_EXEC_TIME=${PROMPT_CMD_MAX_EXEC_TIME:-5}
 ###############################################################################
 
 # Modify the colors and symbols in these variables as desired.
-GIT_PROMPT_PREFIX="%{$fg[green]%}(%{$reset_color%}"
-GIT_PROMPT_SUFFIX="%{$fg[green]%})%{$reset_color%}"
-GIT_PROMPT_AHEAD="%{$fg[red]%}NUM↑%{$reset_color%}"
-GIT_PROMPT_BEHIND="%{$fg[cyan]%}NUM↓%{$reset_color%}"
-GIT_PROMPT_MERGING="%{$fg[magenta]%}⚡︎%{$reset_color%}"
-GIT_PROMPT_UNTRACKED="%{$fg[red]%}●%{$reset_color%}"
-GIT_PROMPT_MODIFIED="%{$fg[yellow]%}●%{$reset_color%}"
-GIT_PROMPT_STAGED="%{$fg[green]%}●%{$reset_color%}"
+PROMPT_GIT_BISECTING="%{$fg[red]%}bisecting,%{$reset_color%}"
+PROMPT_GIT_BRANCH="%{$fg[yellow]%}BRANCH%{$reset_color%}"
+PROMPT_GIT_DETACHED="%{$fg[red]%}detached%{$reset_color%}"
+PROMPT_GIT_PREFIX="%{$fg[green]%}(%{$reset_color%}"
+PROMPT_GIT_SUFFIX="%{$fg[green]%})%{$reset_color%}"
+PROMPT_GIT_AHEAD="%{$fg[red]%}NUM↑%{$reset_color%}"
+PROMPT_GIT_BEHIND="%{$fg[cyan]%}NUM↓%{$reset_color%}"
+PROMPT_GIT_MERGING="%{$fg[magenta]%}⚡︎%{$reset_color%}"
+PROMPT_GIT_UNTRACKED="%{$fg[red]%}●%{$reset_color%}"
+PROMPT_GIT_MODIFIED="%{$fg[yellow]%}●%{$reset_color%}"
+PROMPT_GIT_STAGED="%{$fg[green]%}●%{$reset_color%}"
 
+prompt_git_bisecting() {
+  if git bisect log >/dev/null 2>&1; then
+    echo "$PROMPT_GIT_BISECTING "
+  fi
+}
 
 # Show Git branch/tag, or name/rev with a warning if on detached head
 prompt_git_branch() {
   local branch
   if branch="$(git symbolic-ref -q --short HEAD 2> /dev/null)"; then
     # HEAD points to a branch
-    echo "%{$fg[yellow]%}$branch%{$reset_color%}"
+    echo "${PROMPT_GIT_BRANCH//BRANCH/$branch}"
   else
     # Detached head, either print whatever name we can get or a commit hash
     branch="$(git name-rev --name-only --no-undefined --always HEAD 2> /dev/null)"
-    echo "%{$fg[red]%}detached %{$fg[yellow]%}$branch%{$reset_color%}"
-  fi
-}
-
-prompt_git_bisecting() {
-  if git bisect log >/dev/null 2>&1; then
-    echo "%{$fg[red]%}bisecting, %{$reset_color%}"
+    echo "$PROMPT_GIT_DETACHED ${PROMPT_GIT_BRANCH//BRANCH/$branch}"
   fi
 }
 
 # Show different symbols as appropriate for various Git repository states
 prompt_git_state() {
-  # Compose this value via multiple conditional appends.
-  local GIT_STATE=""
+  local output=""
 
-  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+  local NUM_AHEAD NUM_BEHIND
+  NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
   if [ "$NUM_AHEAD" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD//NUM/$NUM_AHEAD}
+    output=$output${PROMPT_GIT_AHEAD//NUM/$NUM_AHEAD}
   fi
-
-  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+  NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
   if [ "$NUM_BEHIND" -gt 0 ]; then
-    GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND//NUM/$NUM_BEHIND}
+    output=$output${PROMPT_GIT_BEHIND//NUM/$NUM_BEHIND}
   fi
 
   # Merge indicator and traffic light
-  local GIT_STATE_2
-  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-  if [ -n "$GIT_DIR" ] && test -r $GIT_DIR/MERGE_HEAD; then
-    GIT_STATE_2=$GIT_STATE_2$GIT_PROMPT_MERGING
+  local GIT_DIR output_2
+  GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+  if [ -n "$GIT_DIR" ] && test -r "$GIT_DIR/MERGE_HEAD"; then
+    output_2=$output_2$PROMPT_GIT_MERGING
   fi
 
   if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
-    GIT_STATE_2=$GIT_STATE_2$GIT_PROMPT_UNTRACKED
+    output_2=$output_2$PROMPT_GIT_UNTRACKED
   fi
 
   if ! git diff --quiet 2> /dev/null; then
-    GIT_STATE_2=$GIT_STATE_2$GIT_PROMPT_MODIFIED
+    output_2=$output_2$PROMPT_GIT_MODIFIED
   fi
 
   if ! git diff --cached --quiet 2> /dev/null; then
-    GIT_STATE_2=$GIT_STATE_2$GIT_PROMPT_STAGED
+    output_2=$output_2$PROMPT_GIT_STAGED
   fi
 
   # Add space to first part if second part is not empty
-  if [[ -n $GIT_STATE && -n $GIT_STATE_2 ]]; then
-    GIT_STATE="$GIT_STATE "
+  if [[ -n $output && -n $output_2 ]]; then
+    output="$output "
   fi
 
   # Concatenate first and second part, then print prepended with a space if not empty
-  GIT_STATE="$GIT_STATE$GIT_STATE_2"
-  if [[ -n $GIT_STATE ]]; then
-    echo " $GIT_STATE"
+  output="$output$output_2"
+  if [[ -n $output ]]; then
+    echo " $output"
   fi
 
 }
@@ -98,7 +99,7 @@ prompt_git_state() {
 prompt_git_block() {
   local branch="$(prompt_git_branch)"
   if [ -n "$branch" ]; then
-    echo "$GIT_PROMPT_PREFIX$(prompt_git_bisecting)$branch$(prompt_git_state)$GIT_PROMPT_SUFFIX"
+    echo "$PROMPT_GIT_PREFIX$(prompt_git_bisecting)$branch$(prompt_git_state)$PROMPT_GIT_SUFFIX"
   fi
 }
 
@@ -176,7 +177,7 @@ prompt_exec_time_block() {
 prompt_user_block() {
   local user=$(whoami)
 
-  if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
+  if [[ "$user" != "$PROMPT_DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
     echo "%{$fg[magenta]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%}: "
   fi
 }
