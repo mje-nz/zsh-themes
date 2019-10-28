@@ -35,7 +35,33 @@ Submodules or nested repos:
 
 
 ## Installation
-TODO
+
+### For [zgen](https://github.com/tarjoilija/zgen) users
+Add this to your `~/.zshrc` with your other plugins, after loading oh-my-zsh:
+
+```zsh
+  zgen load mafredri/zsh-async
+  zgen load mje-nz/zsh-themes async
+  # or to disable asynchronous mode
+  zgen load mje-nz/zsh-themes simple
+```
+
+### For [antigen](https://github.com/zsh-users/antigen) users (untested)
+Add this to your `~/.zshrc` somewhere after loading oh-my-zsh:
+
+```zsh
+antigen bundle mafredri/zsh-async
+antigen theme https://github.com/mje-nz/zsh-themes async
+```
+
+### For [zplug](https://github.com/zplug/zplug) users (untested)
+Add this to your `~/.zshrc` with your other plugins:
+
+```zsh
+zplug mafredri/zsh-async, from:github
+setopt prompt_subst
+zplug "mje-nz/zsh-themes", use:async.zsh-theme, defer:3
+```
 
 
 ## Configuration
