@@ -244,13 +244,7 @@ prompt_docker_block() {
 
 prompt_venv_block() {
   if [[ -n ${VIRTUAL_ENV} ]]; then
-    local venv
-    # Get relative path to venv, ensuring it ends in the venv's name when $PWD is
-    # a subdir of the venv
-    venv="$(realpath --relative-to="$PWD" "$VIRTUAL_ENV:h")/$VIRTUAL_ENV:t"
-    # Remove leading ./
-    venv=${venv#./}
-    echo "($venv) "
+    echo "(${VIRTUAL_ENV:t}) "
   fi
 }
 
